@@ -29,9 +29,91 @@
   Testing the server - run `npm run test-authenticationServer` command in terminal
  */
 
-const express = require("express")
-const PORT = 3000;
-const app = express();
-// write your logic here, DONT WRITE app.listen(3000) when you're running tests, the tests will automatically start the server
-
-module.exports = app;
+  const express = require("express")
+  const PORT = 3000;
+  const app = express();
+  // var bodyParser = require('body-parser')
+  // write your logic here, DONT WRITE app.listen(3000) when you're running tests, the tests will automatically start the server
+  app.listen(3000,(req,res)=>{
+    console.log("running");
+  })
+  app.use(express.json());
+  var a=[];
+  var count=0;
+  
+  function createUser(value){
+    count+=1;
+    var obj={
+      id: count,
+      username: value.username,
+      password: value.password,
+      firstName: value.firstName,
+      lastName: value.lastName
+    }
+    return obj;
+  }
+  
+  function check(arr,user){
+    let bul=false;
+    for(let i=0;i<arr.length;i++){
+      if(arr[i]["username"]===user){
+        bul=true;
+      }
+    }
+    return bul;
+  }
+  
+  function fn(req,res){
+    let val=req.body;
+    console.log(val)
+    var x=req.body.username;
+    let y=createUser(val);
+    var exists=check(a,x);
+    if(exists==false){
+      a.push(y);
+      res.status(201).send("done");
+    }else{
+      res.status(400).send("bad req")
+    }
+    console.log(a)
+  }
+  
+  app.post('/signup', fn);
+  
+  ////////////////////////////////////////////
+  
+  function checkLogin(arr,user,pass){
+    let existsLogin=false;
+    for(let i=0;i<a.length;i++){
+      if(a[i]["username"]===user && a[i]["password"]===pass){
+        existsLogin=a[i];
+        var q=i;
+      }
+    }
+    return existsLogin;
+  }
+  
+  function fn2(req,res){
+    var user=req.body.username;
+    var pass=req.body.password;
+    var u=checkLogin(a,user,pass);
+    if(u==false){
+      res.status(401).send("doesnt  exist")
+    }else{
+      let obj2={
+         username: u.username,
+         password: u.password
+      }
+       console.log(obj2)
+       
+       res.status(200).send("done")
+    }
+  }
+  app.post('/login', fn2);
+  
+  /////////////////////////////////////////////////////
+  
+  
+  
+  module.exports = app;
+  
