@@ -41,9 +41,12 @@
  */
   const express = require('express');
   const bodyParser = require('body-parser');
+  const path=require('path');
+  const cors=require('cors');
   
   const app = express();
   
+  app.use(cors());
   app.use(bodyParser.json());
   app.listen(3000,()=>{
     console.log("running perfect");
@@ -111,7 +114,8 @@
     let idtoDel=req.params.id; 
   
     let idChk=check(a,idtoDel);
-    if(idChk==false){res.status(404).send("Not found");}
+    console.log(idChk);
+    if(idChk===false){res.status(404).send("Not found");}
     else{
       a.splice(idChk,1);
       console.log(a);
@@ -119,5 +123,9 @@
     }
   })
   
+  app.get('/',(req,res)=>{
+    
+    res.sendFile(path.join(__dirname,"index.html"));
+  })
   module.exports = app;
   

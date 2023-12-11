@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head></head>
+
+  <script>
+    getData();
+    // document.getElementById("divMain").innerHTML="abcd";
+
+    function cb(){
+      console.log("DONE")
+    }
+    function del(id){
+      fetch("http://localhost:3000/todos/"+id,{
+        method:"DELETE",
+        headers:{
+          "Content-Type":"application/json"
+        }
+      }).then(cb);
+    }
+
+    function nxtFn2(data){
+      console.log(data);
+      for(let i=0;i<data.length;i++){
+      var main=document.getElementById("divMain");
+      var div1=document.createElement("div");
+      div1.innerHTML=data[i].title;
+      var div2=document.createElement("div");
+      div2.innerHTML=data[i].description;
+      var btn=document.createElement("button");
+      btn.setAttribute("onclick","del("+data[i].id+")");
+      btn.innerHTML="delete";
+
+      main.appendChild(div1);
+      main.appendChild(div2);
+      main.appendChild(btn);
+    }
+  }
+    function getCallback(resp){
+      resp.json().then(nxtFn2);
+    }
+
+    function getData(){
+      fetch('http://localhost:3000/todos',{
+        method:"GET"
+      }).then(getCallback)
+    }
+
+    function nxtFn(data){
+        console.log(data);
+
+        var main=document.getElementById("divMain");
+      var div1=document.createElement("div");
+      div1.innerHTML=data.title;
+      var div2=document.createElement("div");
+      div2.innerHTML=data.description;
+      var btn=document.createElement("button");
+      btn.setAttribute("onclick","del("+data.id+")");
+      btn.innerHTML="delete";
+
+      main.appendChild(div1);
+      main.appendChild(div2);
+      main.appendChild(btn);
+    }
+
+    function callback(response){
+
+        response.json().then(nxtFn);
+    }
+
+    function onClkFn(){
+      var title=document.getElementById("title").value;
+      var description=document.getElementById("description").value;
+
+        fetch('http://localhost:3000/todos', {
+            method:"POST",
+            body:JSON.stringify({
+              title:title,
+              description:description
+            }),
+            headers:{
+              "Content-Type":"application/json"
+            }
+        }).then(callback);
+    }
+
+  </script>
+
+  <body>
+    TITLE
+    <input id="title"><br><br>
+    DESC <input id="description"><br><br>
+    <button onclick="onClkFn()">send</button><br><br>
+    <div id="divMain"></div>
+  </body>
+</html>
